@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container } from "nes-react";
+import { Container, Balloon, Button } from "nes-react";
 // Get a random pokemon (original 150)
 
 // Present the user with a picture of the random pokemon
@@ -26,10 +26,14 @@ const PickThatPokemon = () => {
     Type2: string;
   }
 
+  interface iPokemons {
+    initialPokemons: Array<iPokemon>;
+    currentPokemons: Array<iPokemon>;
+  }
   const timer = 10;
   const [pokemon, setPokemon] = useState<iPokemon>();
   const [selection, setSelection] = useState<Array<iPokemon>>([]);
-  const [pokemons, setPokemons] = useState({
+  const [pokemons, setPokemons] = useState<iPokemons>({
     initialPokemons: [],
     currentPokemons: [],
   });
@@ -58,7 +62,7 @@ const PickThatPokemon = () => {
     setSelection(selection);
     setPokemon(selection[Math.floor(Math.random() * selection.length - 1)]);
   };
-  
+
   const getRandomPokemon = () => {
     const index = Math.floor(
       Math.random() * pokemons.currentPokemons.length - 1
@@ -73,21 +77,29 @@ const PickThatPokemon = () => {
     setPokemons({ ...pokemons, currentPokemons: newPokemons });
   };
 
-  let selectionTiles = selection.map((pokemon: iPokemon) => (
-    <button>{pokemon?.English}</button>
-  ));
+  let selectionTiles = selection.map(
+    (pokemon: iPokemon) =>
+      pokemon.English && <Button key={pokemon?.Kana}>{pokemon?.English}</Button>
+  );
   return (
     <div style={{ margin: "5% 40%" }}>
       <Container>
-        <img
-          style={{ height: "250px", width: "250px" }}
-          src={`https://media.bulbagarden.net/media/upload/thumb/${pokemon?.Art}`}
-          alt="currentPokemon"
-        />
-        <h1>Guess that Pokemon</h1>
+        <Balloon>
+          {pokemon ? (
+            <img
+              style={{ height: "250px", width: "250px" }}
+              src={`https://media.bulbagarden.net/media/upload/thumb/${pokemon?.Art}`}
+              alt="currentPokemon"
+            />
+          ) : (
+            "Guess that Pokemon"
+          )}
+        </Balloon>
         <div>
-          <button onClick={getSelection}>Start</button>
           {selectionTiles}
+          <div onClick={getSelection}>
+            <Button>Start</Button>
+          </div>
         </div>
       </Container>
     </div>
