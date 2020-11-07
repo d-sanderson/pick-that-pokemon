@@ -11,7 +11,7 @@ import { Container } from "nes-react";
 // When the user guesses incorrectly an alternate sound will play to indicate that they guessed incorrectly. A user has 3 tries
 
 const PickThatPokemon = () => {
-  interface PokemonPropType {
+  interface iPokemon {
     Art: string;
     English: string;
     Hepburn: string;
@@ -27,13 +27,12 @@ const PickThatPokemon = () => {
   }
 
   const timer = 10;
-  const [pokemon, setPokemon] = useState<PokemonPropType>();
-  const [selection, setSelection] = useState([])
+  const [pokemon, setPokemon] = useState<iPokemon>();
+  const [selection, setSelection] = useState<Array<iPokemon>>([]);
   const [pokemons, setPokemons] = useState({
     initialPokemons: [],
     currentPokemons: [],
   });
-
 
   useEffect(() => {
     async function fetchPokemon() {
@@ -48,23 +47,24 @@ const PickThatPokemon = () => {
       });
     }
     fetchPokemon();
-
     return () => {};
   }, []);
 
   const getSelection = () => {
-    for(const i = 0; i < 6; i++) {
-      const randomPokemon = getRandomPokemon();
-      setSelection([...selection, randomPokemon])
+    let selection: Array<iPokemon> = [];
+    for (let i = 0; i < 6; i++) {
+      selection = [...selection, getRandomPokemon()];
     }
-
+    setSelection(selection);
+    setPokemon(selection[Math.floor(Math.random() * selection.length - 1)]);
   };
+  
   const getRandomPokemon = () => {
     const index = Math.floor(
       Math.random() * pokemons.currentPokemons.length - 1
     );
     const randomPokemon = pokemons.currentPokemons[index];
-    return randomPokemon
+    return randomPokemon;
   };
 
   const removePokemon = (index: number) => {
@@ -72,18 +72,22 @@ const PickThatPokemon = () => {
     newPokemons.slice(index, 1);
     setPokemons({ ...pokemons, currentPokemons: newPokemons });
   };
+
+  let selectionTiles = selection.map((pokemon: iPokemon) => (
+    <button>{pokemon?.English}</button>
+  ));
   return (
-    <div style={{margin: '5% 40%'}}>
+    <div style={{ margin: "5% 40%" }}>
       <Container>
         <img
           style={{ height: "250px", width: "250px" }}
           src={`https://media.bulbagarden.net/media/upload/thumb/${pokemon?.Art}`}
           alt="currentPokemon"
         />
-        {JSON.stringify(selection, null, 2)}
         <h1>Guess that Pokemon</h1>
         <div>
-        <button style={{margin: 'auto'}} onClick={getSelection}>Start</button>
+          <button onClick={getSelection}>Start</button>
+          {selectionTiles}
         </div>
       </Container>
     </div>
