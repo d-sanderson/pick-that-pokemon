@@ -37,6 +37,7 @@ const PickThatPokemon = () => {
     initialPokemons: [],
     currentPokemons: [],
   });
+  const [score, setScore] = useState(0)
   const [guesses, setGuesses] = useState(3);
   useEffect(() => {
     async function fetchPokemon() {
@@ -80,6 +81,7 @@ const PickThatPokemon = () => {
     let selectedPokemon = e.target.textContent;
     if (selectedPokemon === pokemon?.English) {
       getSelection();
+      setScore(score + 10);
     }
     else {
       setGuesses(guesses - 1)
@@ -95,8 +97,9 @@ const PickThatPokemon = () => {
   );
   return (
     <div style={{ margin: "5% 40%" }}>
-      <Container>
+      <Container dark centered>
         {guesses < 0 ? 0 : guesses} guesses remaining
+        SCORE: {score}
         <Balloon>
           {pokemon ? (
             <img
@@ -109,7 +112,9 @@ const PickThatPokemon = () => {
           )}
         </Balloon>
         <div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
           {selectionTiles}
+          </div>
           <div onClick={getSelection}>
             <Button>Start</Button>
           </div>
