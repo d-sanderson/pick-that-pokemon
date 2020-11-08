@@ -37,14 +37,13 @@ const PickThatPokemon = () => {
     initialPokemons: [],
     currentPokemons: [],
   });
-
+  const [guesses, setGuesses] = useState(3);
   useEffect(() => {
     async function fetchPokemon() {
       const response = await fetch(
         "https://s.cdpn.io/2652102/pokemon_gen_1.json"
       );
       const json = await response.json();
-      console.log(json.data);
       setPokemons({
         initialPokemons: json.data,
         currentPokemons: json.data,
@@ -77,13 +76,27 @@ const PickThatPokemon = () => {
     setPokemons({ ...pokemons, currentPokemons: newPokemons });
   };
 
+  const handleClick = (e: any): void => {
+    let selectedPokemon = e.target.textContent;
+    if (selectedPokemon === pokemon?.English) {
+      getSelection();
+    }
+    else {
+      setGuesses(guesses - 1)
+    }
+  };
   let selectionTiles = selection.map(
     (pokemon: iPokemon) =>
-      pokemon.English && <Button key={pokemon?.Kana}>{pokemon?.English}</Button>
+      pokemon.English && (
+        <button onClick={handleClick} key={pokemon?.Kana}>
+          {pokemon?.English}
+        </button>
+      )
   );
   return (
     <div style={{ margin: "5% 40%" }}>
       <Container>
+        {guesses < 0 ? 0 : guesses} guesses remaining
         <Balloon>
           {pokemon ? (
             <img
