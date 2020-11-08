@@ -116,7 +116,7 @@ const PickThatPokemon = () => {
           {selectionTiles}
           </div>
           <div onClick={getSelection}>
-            <Button>Start</Button>
+            {!pokemon && <Button>Start</Button>}
           </div>
         </div>
       </Container>
